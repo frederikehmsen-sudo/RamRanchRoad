@@ -4,4 +4,5 @@
     <Project Path="Server/Infrastructure/Infrastructure.csproj" />
     <Project Path="Server/Service/Service.csproj" />
   </Folder>
+  <Folder Name="/Server/API/" />
 </Solution>
