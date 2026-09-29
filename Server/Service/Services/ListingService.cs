@@ -1,6 +1,12 @@
-﻿namespace Service.Services;
+﻿using Infrastructure;
+using Infrastructure.Entities;
 
-public class ListingService
+namespace Service.Services;
+
+public class ListingService(RamRanchDatabase db)
 {
-    
+    public List<Listing> GetListings()
+    {
+        return db.Listings.ToList();
+    }
 }

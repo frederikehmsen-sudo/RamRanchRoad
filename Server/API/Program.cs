@@ -1,38 +1,30 @@
+using DefaultNamespace;
 using Infrastructure;
 using Infrastructure.Entities;
 using LinqToDB;
+using Service.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var options = new DataOptions<RamRanchDatabase>(new DataOptions().UseSQLite("Data Source=db.db"));
 builder.Services.AddScoped<RamRanchDatabase>(_ => new RamRanchDatabase(options));
 
-builder.Services.AddScoped<RamRanchDatabase>();
+builder.Services.AddScoped<RamRanchSeeder>();
+builder.Services.AddScoped<ListingService>();
 builder.Services.AddControllers();
+builder.Services.AddOpenApiDocument();
+builder.Services.AddCors();
 
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<RamRanchDatabase>();
-    db.CreateTable<User>();
-    db.CreateTable<Listing>();
-    db.CreateTable<Order>();
-    db.CreateTable<Category>();
-
-    var ordinaryUser = db.InsertWithInt32Identity(new User() { Username = "ordinaryUser" });
-    var exampleUser = db.InsertWithInt32Identity(new User() { Username = "exampleUser" });
-
-    db.Insert(new Listing
-    {
-        VendorId = exampleUser,
-        CategoryId = 1,
-        Title = "Fake Coke, 1g",
-        Description = "Definitely not baking soda",
-        Price = 20m,
-        Stock = 50
-    });
+    scope.ServiceProvider.GetRequiredService<RamRanchSeeder>().Seed();
 }
 
+
+app.UseCors(config => config.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().SetIsOriginAllowed(_ => true));
 app.MapControllers();
+app.UseOpenApi();
+app.UseSwaggerUi();
 app.Run();

@@ -4,7 +4,7 @@ namespace Infrastructure.Entities;
 
 public class Order
 {
-    [PrimaryKey] public int Id { get; set; }
+    [PrimaryKey, Identity] public int Id { get; set; }
     public int BuyerId { get; set; }
     public int ListingId { get; set; }
     public string ProductTitle { get; set; } = "";
