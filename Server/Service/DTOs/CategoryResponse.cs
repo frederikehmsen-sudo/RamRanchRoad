@@ -1,6 +1,7 @@
-﻿namespace Service.DTOs;
+﻿using Facet;
+using Infrastructure.Entities;
 
-public class CategoryResponse
-{
-    
-}
+namespace Service.DTOs;
+
+[Facet(typeof(Category))]
+public partial class CategoryResponse;

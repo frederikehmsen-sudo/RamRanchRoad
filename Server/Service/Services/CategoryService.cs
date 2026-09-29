@@ -1,6 +1,17 @@
-﻿namespace Service.Services;
+﻿using Infrastructure;
+using LinqToDB;
+using Service.DTOs;
 
-public class CategoryService
+namespace Service.Services;
+
+public class CategoryService(RamRanchDatabase db)
 {
-    
+    public List<CategoryResponse> GetCategories()
+    {
+        return db.Categories
+            .OrderBy(c => c.Name)
+            .ToList()
+            .Select(c => new CategoryResponse(c))
+            .ToList();
+    }
 }

@@ -14,6 +14,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddScoped<RamRanchSeeder>();
 builder.Services.AddScoped<ListingService>();
+builder.Services.AddScoped<CategoryService>();
 builder.Services.AddControllers();
 builder.Services.AddOpenApiDocument();
 builder.Services.AddCors();
