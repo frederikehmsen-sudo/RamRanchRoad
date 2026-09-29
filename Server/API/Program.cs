@@ -1,3 +1,4 @@
+using Api;
 using DefaultNamespace;
 using Infrastructure;
 using Infrastructure.Entities;
@@ -9,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 var options = new DataOptions<RamRanchDatabase>(new DataOptions().UseSQLite("Data Source=db.db"));
 builder.Services.AddScoped<RamRanchDatabase>(_ => new RamRanchDatabase(options));
 
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddScoped<RamRanchSeeder>();
 builder.Services.AddScoped<ListingService>();
 builder.Services.AddControllers();
@@ -22,7 +25,7 @@ using (var scope = app.Services.CreateScope())
     scope.ServiceProvider.GetRequiredService<RamRanchSeeder>().Seed();
 }
 
-
+app.UseExceptionHandler();
 app.UseCors(config => config.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().SetIsOriginAllowed(_ => true));
 app.MapControllers();
 app.UseOpenApi();
