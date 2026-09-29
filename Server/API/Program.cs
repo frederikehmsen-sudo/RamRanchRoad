@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var options = new DataOptions<RamRanchDatabase>(new DataOptions().UseSQLite("Data Source=db.db"));
 builder.Services.AddScoped<RamRanchDatabase>(_ => new RamRanchDatabase(options));
-
+builder.Services.AddScoped<OrderService>();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddScoped<RamRanchSeeder>();
