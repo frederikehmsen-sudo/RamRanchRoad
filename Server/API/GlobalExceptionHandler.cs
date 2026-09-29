@@ -1,18 +1,23 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api;
 
 public class GlobalExceptionHandler : IExceptionHandler
 {
-    public ValueTask<bool> TryHandleAsync(HttpContext httpContext,
+    public async ValueTask<bool> TryHandleAsync(HttpContext httpContext,
         Exception exception, CancellationToken cancellationToken)
     {
-        httpContext.Response.WriteAsJsonAsync(
-            new ProblemDetails()
-            {
-                Title = exception.Message
-            });
-        return default;
+        var (status, title) = exception switch
+        {
+            ValidationException => (StatusCodes.Status400BadRequest, exception.Message),
+            _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred")
+        };
+
+        httpContext.Response.StatusCode = status;
+        await httpContext.Response.WriteAsJsonAsync(
+            new ProblemDetails { Status = status, Title = title }, cancellationToken);
+        return true;
     }
 }
