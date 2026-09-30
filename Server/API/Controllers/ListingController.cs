@@ -20,4 +20,17 @@ public class ListingController(ListingService service) : ControllerBase
     {
         return service.CreateListing(request, CurrentUserId);
     }
+
+    [HttpPut(nameof(UpdateListing))]
+    public ListingResponse UpdateListing(UpdateListingRequest request)
+    {
+        return service.UpdateListing(request, CurrentUserId);
+    }
+
+
+    [HttpDelete(nameof(DeleteListings))]
+    public void DeleteListings(int listingId)
+    {
+        service.DeleteListing(listingId, CurrentUserId);
+    }
 }
