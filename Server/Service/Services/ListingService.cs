@@ -9,9 +9,14 @@ namespace Service.Services;
 public class ListingService(RamRanchDatabase db)
 {
     
-    public List<ListingResponse> GetListings()
+    public List<ListingResponse> GetListings(int? categoryId = null)
     {
-        return db.Listings
+        IQueryable<Listing> query = db.Listings;
+
+        if (categoryId.HasValue)
+            query = query.Where(l => l.CategoryId == categoryId.Value);
+        
+        return query
             .LoadWith(l => l.Vendor)
             .LoadWith(l => l.Category)
             .ToList()
