@@ -20,13 +20,26 @@ public class ListingService(RamRanchDatabase db)
             .LoadWith(l => l.Vendor)
             .LoadWith(l => l.Category)
             .ToList()
-            .Select(l => new ListingResponse(l)
-            {
-                VendorName = l.Vendor?.Username ?? "",
-                CategoryName = l.Category?.Name ?? ""
-            })
+            .Select(ToResponse)
             .ToList();
     }
+    
+    public List<ListingResponse> GetByVendor(int vendorId)
+    {
+        return db.Listings
+            .Where(l => l.VendorId == vendorId)
+            .LoadWith(l => l.Vendor)
+            .LoadWith(l => l.Category)
+            .ToList()
+            .Select(ToResponse)
+            .ToList();
+    }
+    private static ListingResponse ToResponse(Listing l) => new(l)
+    {
+        VendorName = l.Vendor?.Username ?? "",
+        CategoryName = l.Category?.Name ?? ""
+    };
+    
 
     public ListingResponse CreateListing(CreateListingRequest request, int vendorId)
     {
