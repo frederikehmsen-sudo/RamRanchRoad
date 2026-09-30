@@ -7,6 +7,7 @@ public class Order
     [PrimaryKey, Identity] public int Id { get; set; }
     public int BuyerId { get; set; }
     public int ListingId { get; set; }
+    public int VendorId { get; set; }
     public string ProductTitle { get; set; } = "";
     public int Quantity { get; set; }
     public decimal PricePaid { get; set; } 
