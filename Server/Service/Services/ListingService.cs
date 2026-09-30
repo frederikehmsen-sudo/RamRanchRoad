@@ -54,4 +54,46 @@ public class ListingService(RamRanchDatabase db)
             CategoryName = category.Name
         };
     }
+    
+    public ListingResponse UpdateListing(UpdateListingRequest request, int userId)
+    {
+        var listing = db.Listings.FirstOrDefault(l => l.ListingId == request.ListingIdForLookup) ??
+                      throw new ValidationException("That listing doesn't exist");
+        if (listing.VendorId != userId)
+            throw new ValidationException("You can only change your own listings");
+
+        if (string.IsNullOrWhiteSpace(request.Title))
+            throw new ValidationException("Title is required");
+        if (request.Price <= 0)
+            throw new ValidationException("Price must be greater than 0");
+        if (request.Stock < 0)
+            throw new ValidationException("Stock cannot be negative");
+
+        var category = db.Categories.FirstOrDefault(c => c.Id == request.CategoryId) ??
+                       throw new ValidationException("That category doesn't exist");
+
+        listing.Title = request.Title.Trim();
+        listing.Description = request.Description;
+        listing.Price = request.Price;
+        listing.Stock = request.Stock;
+        listing.CategoryId = category.Id;
+        db.Update(listing);
+
+        var vendor = db.Users.First(u => u.Id == userId);
+        return new ListingResponse(listing)
+        {
+            VendorName = vendor.Username,
+            CategoryName = category.Name
+        };
+    }
+    
+    public void DeleteListing(int listingId, int userId)
+    {
+        var listing = db.Listings.FirstOrDefault(l => l.ListingId == listingId) ??
+                      throw new ValidationException("That listing doesn't exist");
+        if (listing.VendorId != userId)
+            throw new ValidationException("You can only change your own listings");
+
+        db.Delete(listing);
+    }
 }
