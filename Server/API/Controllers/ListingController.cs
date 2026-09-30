@@ -10,9 +10,9 @@ public class ListingController(ListingService service) : ControllerBase
     private const int CurrentUserId = 1; // "ordinaryUser" from the seeder, until real login exists
 
     [HttpGet(nameof(GetListings))]
-    public List<ListingResponse> GetListings()
+    public List<ListingResponse> GetListings([FromQuery] int? categoryId)
     {
-        return service.GetListings();
+        return service.GetListings(categoryId);
     }
 
     [HttpPost(nameof(CreateListing))]
