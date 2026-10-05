@@ -4,6 +4,7 @@ using Service.Services;
 
 namespace Api.Controllers;
 
+[ApiController]
 public class UserController(ListingService listingService) : ControllerBase
 {
     private const int CurrentUserId = 1; // "ordinaryUser" until real login exists
