@@ -4,6 +4,8 @@ using Service.Services;
 
 namespace Api.Controllers;
 
+[ApiController]
+
 public class OrderController(OrderService service) : ControllerBase
 {
     private const int CurrentUserId = 1;
