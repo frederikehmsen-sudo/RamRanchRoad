@@ -1,18 +1,25 @@
 import { useEffect, useState } from "react";
 import logo from "../RamRanchPictureReal.jpg";
-import {Api, type ListingResponse } from "../api/Api";
+import {Api, type ListingResponse, type UserResponse } from "../api/Api";
 
 const MyApi = new Api();
 export default function MainPage() {
     const [listings, setListings] = useState<ListingResponse[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [user, setUser] = useState<UserResponse | null>(null);
 
     useEffect(() => {
         MyApi.getListings.listingGetListings()
             .then(r => setListings(r.data))
             .catch(e => setError(e?.error?.title ?? "Could not load listings"))
             .finally(() => setLoading(false));
+    }, []);
+
+    useEffect(() => {
+        MyApi.getMe.userGetMe() 
+            .then(r => setUser(r.data))
+            .catch(() => setUser(null));
     }, []);
 
     if (loading) return <p>Loading listings...</p>;
@@ -27,7 +34,7 @@ export default function MainPage() {
             </header>
 
             <main className="container">
-                <h2 className="section-title">All listings</h2>
+                <h2 className="section-title">Viewing all listings as {user && ` ${user.userName}`}</h2>
                 <ul className="listings">
                     {listings.map(l => (
                         <li key={l.listingId} className="card">

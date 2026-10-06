@@ -78,6 +78,12 @@ export interface CreateOrderRequest {
   quantity?: number;
 }
 
+export interface UserResponse {
+  /** @format int32 */
+  userId?: number;
+  userName?: string;
+}
+
 export type QueryParamsType = Record<string | number, any>;
 export type ResponseFormat = keyof Omit<Body, "body" | "bodyUsed">;
 
@@ -473,6 +479,22 @@ export class Api<
     userGetMyListings: (params: RequestParams = {}) =>
       this.request<ListingResponse[], any>({
         path: `/GetMyListings`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+  };
+  getMe = {
+    /**
+     * No description
+     *
+     * @tags User
+     * @name UserGetMe
+     * @request GET:/GetMe
+     */
+    userGetMe: (params: RequestParams = {}) =>
+      this.request<UserResponse, any>({
+        path: `/GetMe`,
         method: "GET",
         format: "json",
         ...params,
