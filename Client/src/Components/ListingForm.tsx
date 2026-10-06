@@ -112,7 +112,7 @@ export default function ListingForm({ listing, onSaved, onCancel }: Props) {
                 <button type="submit" disabled={submitting || !categoryId}>
                     {submitting ? "Saving..." : isEdit ? "Save changes" : "Create listing"}
                 </button>
-                {isEdit && onCancel && (
+                {onCancel && (
                     <button type="button" className="secondary" onClick={onCancel}>
                         Cancel
                     </button>

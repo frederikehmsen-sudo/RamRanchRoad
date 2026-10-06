@@ -7,7 +7,7 @@ namespace Api.Controllers;
 [ApiController]
 public class UserController(ListingService listingService, UserService userService) : ControllerBase
 {
-    private const int CurrentUserId = 1; // "ordinaryUser" until real login exists
+    private const int CurrentUserId = 2; // "ordinaryUser" until real login exists
 
     [HttpGet(nameof(GetMyListings))]
     public List<ListingResponse> GetMyListings()

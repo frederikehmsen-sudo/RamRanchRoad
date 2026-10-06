@@ -13,6 +13,7 @@ export default function MainPage() {
     const [user, setUser] = useState<UserResponse | null>(null);
     const [editingId, setEditingId] = useState<number | null>(null);
     const [notice, setNotice] = useState<{ type: "success" | "error"; text: string} | null>(null)
+    const [showCreate, setShowCreate] = useState(false);
 
     const load = () =>
         MyApi.getListings.listingGetListings()
@@ -52,6 +53,8 @@ export default function MainPage() {
 
     const handleCreated = (created: ListingResponse) => {
         setListings(prev => [...prev, created]);
+        setShowCreate(false);          // close the dialog after saving
+        setNotice({ type: "success", text: `Listed "${created.title}"` });
     };
 
     const handleUpdated = (updated: ListingResponse) => {
@@ -75,20 +78,26 @@ export default function MainPage() {
             <header className="site-header">
                 <img src={logo} alt="Ram Ranch welcome mat" className="site-logo" />
                 <h1>Ram Ranch Road</h1>
+                <button
+                    type="button"
+                    className="header-action"
+                    onClick={() => setShowCreate(true)}
+                >
+                    + Create listing
+                </button>
             </header>
 
             <main className="container">
-                <ListingForm onSaved={handleCreated} />
 
                 <h2 className="section-title">Viewing all listings as {user && ` ${user.userName}`}</h2>
-
-                {loading && <p>Loading listings...</p>}
-                {error && <p className="form-error">{error}</p>}
-                {!loading && !error && listings.length === 0 && <p>No listings yet.</p>}
 
                 {notice && (
                     <p className={notice.type === "error" ? "form-error" : "form-success"}>{notice.text}</p>
                 )}
+
+                {loading && <p>Loading listings...</p>}
+                {error && <p className="form-error">{error}</p>}
+                {!loading && !error && listings.length === 0 && <p>No listings yet.</p>}
 
                 <ul className="listings">
                     {listings.map(l =>
@@ -113,6 +122,21 @@ export default function MainPage() {
                     )}
                 </ul>
             </main>
+            {showCreate && (
+                <div className="modal-backdrop" onClick={() => setShowCreate(false)}>
+                    <div
+                        className="modal"
+                        role="dialog"
+                        aria-modal="true"
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <ListingForm
+                            onSaved={handleCreated}
+                            onCancel={() => setShowCreate(false)}
+                        />
+                    </div>
+                </div>
+            )}
         </>
     );
 }
