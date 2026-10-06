@@ -226,3 +226,12 @@ button.danger {
 button.danger:hover {
   background: #8f3324;
 }
+
+.qty-input {
+  width: 4.5rem;
+}
+
+.form-success {
+  color: #81c784;
+  margin: 0 0 1rem;
+}

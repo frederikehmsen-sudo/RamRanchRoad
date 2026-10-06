@@ -12,13 +12,37 @@ export default function MainPage() {
     const [error, setError] = useState<string | null>(null);
     const [user, setUser] = useState<UserResponse | null>(null);
     const [editingId, setEditingId] = useState<number | null>(null);
+    const [notice, setNotice] = useState<{ type: "success" | "error"; text: string} | null>(null)
 
-    useEffect(() => {
+    const load = () =>
         MyApi.getListings.listingGetListings()
             .then(r => setListings(r.data))
             .catch(e => setError(e?.error?.title ?? "Could not load listings"))
             .finally(() => setLoading(false));
-    }, []);
+    useEffect(() => { load(); }, []);
+
+    const buy = async (listing: ListingResponse, quantity: number) => {
+        setNotice(null);
+        try {
+            const r = await MyApi.placeOrder.orderPlaceOrder({
+                listingId: listing.listingId,
+                quantity,
+            });
+            setListings(prev =>
+                prev.map(l =>
+                    l.listingId === listing.listingId
+                        ? { ...l, stock: (l.stock ?? 0) - quantity }
+                        : l
+                )
+            );
+            setNotice({
+                type: "success",
+                text: `Ordered ${r.data.quantity} × ${r.data.productTitle} for ${r.data.pricePaid} kr`,
+            });
+        } catch (e: any) {
+            setNotice({ type: "error", text: e?.error?.title ?? "Could not place order" });
+        }
+    };
 
     useEffect(() => {
         MyApi.getMe.userGetMe()
@@ -62,6 +86,10 @@ export default function MainPage() {
                 {error && <p className="form-error">{error}</p>}
                 {!loading && !error && listings.length === 0 && <p>No listings yet.</p>}
 
+                {notice && (
+                    <p className={notice.type === "error" ? "form-error" : "form-success"}>{notice.text}</p>
+                )}
+
                 <ul className="listings">
                     {listings.map(l =>
                         editingId === l.listingId ? (
@@ -79,6 +107,7 @@ export default function MainPage() {
                                 isOwner={user !== null && l.vendorId === user.userId}
                                 onEdit={() => setEditingId(l.listingId ?? null)}
                                 onDelete={() => handleDelete(l.listingId)}
+                                onBuy={quantity => buy(l, quantity)}
                             />
                         )
                     )}
