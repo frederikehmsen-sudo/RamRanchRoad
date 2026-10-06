@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
 import logo from "../RamRanchPictureReal.jpg";
-import {Api, type ListingResponse, type UserResponse } from "../api/Api";
+import { Api, type ListingResponse, type UserResponse } from "../api/Api";
+import ListingForm from "../components/ListingForm";
+import ListingCard from "../components/ListingCard";
 
 const MyApi = new Api();
+
 export default function MainPage() {
     const [listings, setListings] = useState<ListingResponse[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [user, setUser] = useState<UserResponse | null>(null);
+    const [editingId, setEditingId] = useState<number | null>(null);
 
     useEffect(() => {
         MyApi.getListings.listingGetListings()
@@ -17,14 +21,30 @@ export default function MainPage() {
     }, []);
 
     useEffect(() => {
-        MyApi.getMe.userGetMe() 
+        MyApi.getMe.userGetMe()
             .then(r => setUser(r.data))
             .catch(() => setUser(null));
     }, []);
 
-    if (loading) return <p>Loading listings...</p>;
-    if (error) return <p>{error}</p>;
-    if (listings.length === 0) return <p>No listings yet.</p>;
+    const handleCreated = (created: ListingResponse) => {
+        setListings(prev => [...prev, created]);
+    };
+
+    const handleUpdated = (updated: ListingResponse) => {
+        setListings(prev => prev.map(l => (l.listingId === updated.listingId ? updated : l)));
+        setEditingId(null);
+    };
+
+    const handleDelete = async (listingId: number | undefined) => {
+        if (listingId === undefined) return;
+        if (!confirm("Delete this listing?")) return;
+        try {
+            await MyApi.deleteListings.listingDeleteListings({ listingId });
+            setListings(prev => prev.filter(l => l.listingId !== listingId));
+        } catch (e: any) {
+            setError(e?.error?.title ?? "Could not delete listing");
+        }
+    };
 
     return (
         <>
@@ -34,20 +54,34 @@ export default function MainPage() {
             </header>
 
             <main className="container">
+                <ListingForm onSaved={handleCreated} />
+
                 <h2 className="section-title">Viewing all listings as {user && ` ${user.userName}`}</h2>
+
+                {loading && <p>Loading listings...</p>}
+                {error && <p className="form-error">{error}</p>}
+                {!loading && !error && listings.length === 0 && <p>No listings yet.</p>}
+
                 <ul className="listings">
-                    {listings.map(l => (
-                        <li key={l.listingId} className="card">
-                            <span className="badge">{l.categoryName}</span>
-                            <h3>{l.title}</h3>
-                            <p className="description">{l.description}</p>
-                            <div className="card-footer">
-                                <span className="price">{l.price} kr</span>
-                                <span className="stock">{l.stock} in stock</span>
-                            </div>
-                            <p className="vendor">Sold by {l.vendorName}</p>
-                        </li>
-                    ))}
+                    {listings.map(l =>
+                        editingId === l.listingId ? (
+                            <li key={l.listingId} className="card">
+                                <ListingForm
+                                    listing={l}
+                                    onSaved={handleUpdated}
+                                    onCancel={() => setEditingId(null)}
+                                />
+                            </li>
+                        ) : (
+                            <ListingCard
+                                key={l.listingId}
+                                listing={l}
+                                isOwner={user !== null && l.vendorId === user.userId}
+                                onEdit={() => setEditingId(l.listingId ?? null)}
+                                onDelete={() => handleDelete(l.listingId)}
+                            />
+                        )
+                    )}
                 </ul>
             </main>
         </>
