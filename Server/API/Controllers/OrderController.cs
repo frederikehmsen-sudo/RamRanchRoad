@@ -6,11 +6,9 @@ namespace Api.Controllers;
 
 [ApiController]
 
-public class OrderController(OrderService service) : ControllerBase
+public class OrderController(OrderService service, ICurrentUser currentUser) : ControllerBase
 {
-    private const int CurrentUserId = 1;
-
     [HttpPost(nameof(PlaceOrder))]
     public OrderResponse PlaceOrder(CreateOrderRequest request)
-        => service.PlaceOrder(request, CurrentUserId);
+        => service.PlaceOrder(request, currentUser.Id);
 }

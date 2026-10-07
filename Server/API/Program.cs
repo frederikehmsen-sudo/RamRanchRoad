@@ -12,6 +12,8 @@ builder.Services.AddScoped<RamRanchDatabase>(_ => new RamRanchDatabase(options))
 builder.Services.AddScoped<OrderService>();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUser, HeaderCurrentUser>();
 builder.Services.AddScoped<RamRanchSeeder>();
 builder.Services.AddScoped<ListingService>();
 builder.Services.AddScoped<CategoryService>();

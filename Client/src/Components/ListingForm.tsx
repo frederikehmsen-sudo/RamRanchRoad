@@ -1,7 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Api, type CategoryResponse, type ListingResponse } from "../api/Api";
-
-const MyApi = new Api();
+import { MyApi } from "../api/client";
 
 type Props = {
     listing?: ListingResponse; 
@@ -112,7 +111,7 @@ export default function ListingForm({ listing, onSaved, onCancel }: Props) {
                 <button type="submit" disabled={submitting || !categoryId}>
                     {submitting ? "Saving..." : isEdit ? "Save changes" : "Create listing"}
                 </button>
-                {isEdit && onCancel && (
+                {onCancel && (
                     <button type="button" className="secondary" onClick={onCancel}>
                         Cancel
                     </button>
