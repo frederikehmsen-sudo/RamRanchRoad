@@ -1,7 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Api, type CategoryResponse, type ListingResponse } from "../api/Api";
-
-const MyApi = new Api();
+import { MyApi } from "../api/client";
 
 type Props = {
     listing?: ListingResponse; 

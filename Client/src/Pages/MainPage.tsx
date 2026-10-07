@@ -3,9 +3,7 @@ import logo from "../RamRanchPictureReal.jpg";
 import { Api, type ListingResponse, type UserResponse } from "../api/Api";
 import ListingForm from "../components/ListingForm";
 import ListingCard from "../components/ListingCard";
-
-const MyApi = new Api();
-
+import { MyApi } from "../api/client";
 export default function MainPage() {
     const [listings, setListings] = useState<ListingResponse[]>([]);
     const [loading, setLoading] = useState(true);

@@ -6,9 +6,8 @@ using Service.Services;
 namespace Api.Controllers;
 
 [ApiController]
-public class ListingController(ListingService service) : ControllerBase
+public class ListingController(ListingService service, ICurrentUser currentUser) : ControllerBase
 {
-    private const int CurrentUserId = 1; // "ordinaryUser" from the seeder, until real login exists
 
     [HttpGet(nameof(GetListings))]
     public List<ListingResponse> GetListings([FromQuery] int? categoryId)
@@ -19,19 +18,19 @@ public class ListingController(ListingService service) : ControllerBase
     [HttpPost(nameof(CreateListing))]
     public ListingResponse CreateListing(CreateListingRequest request)
     {
-        return service.CreateListing(request, CurrentUserId);
+        return service.CreateListing(request, currentUser.Id);
     }
 
     [HttpPut(nameof(UpdateListing))]
     public ListingResponse UpdateListing(UpdateListingRequest request)
     {
-        return service.UpdateListing(request, CurrentUserId);
+        return service.UpdateListing(request, currentUser.Id);
     }
 
 
     [HttpDelete(nameof(DeleteListings))]
     public void DeleteListings(int listingId)
     {
-        service.DeleteListing(listingId, CurrentUserId);
+        service.DeleteListing(listingId, currentUser.Id);
     }
 }

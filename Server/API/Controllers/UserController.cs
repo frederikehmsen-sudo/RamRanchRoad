@@ -5,15 +5,14 @@ using Service.Services;
 namespace Api.Controllers;
 
 [ApiController]
-public class UserController(ListingService listingService, UserService userService) : ControllerBase
+public class UserController(ListingService listingService, UserService userService, ICurrentUser currentUser) : ControllerBase
 {
-    private const int CurrentUserId = 2; // "ordinaryUser" until real login exists
 
     [HttpGet(nameof(GetMyListings))]
     public List<ListingResponse> GetMyListings()
-        => listingService.GetByVendor(CurrentUserId);
+        => listingService.GetByVendor(currentUser.Id);
     
     [HttpGet(nameof(GetMe))]
     public UserResponse GetMe()
-        => userService.GetById(CurrentUserId);
+        => userService.GetById(currentUser.Id);
 }
