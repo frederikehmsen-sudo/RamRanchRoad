@@ -4,6 +4,8 @@ import { Api, type ListingResponse, type UserResponse } from "../api/Api";
 import ListingForm from "../components/ListingForm";
 import ListingCard from "../components/ListingCard";
 import { MyApi } from "../api/client";
+import { type CategoryResponse, type ListingResponse, type UserResponse } from "../api/Api";
+import CategoryForm from "../components/CategoryForm";
 export default function MainPage() {
     const [listings, setListings] = useState<ListingResponse[]>([]);
     const [loading, setLoading] = useState(true);
@@ -15,6 +17,31 @@ export default function MainPage() {
     const [categories, setCategories] = useState<CategoryResponse[]>([]);
     const [categoryFilter, setCategoryFilter] = useState<number | null>(null);
     const [showFilter, setShowFilter] = useState(false);
+    const [showCategories, setShowCategories] = useState(false);
+    const [categoryError, setCategoryError] = useState<string | null>(null);
+
+    const loadCategories = () =>
+        MyApi.getCategories.categoryGetCategories()
+            .then(r => setCategories(r.data))
+            .catch(() => {});
+
+    useEffect(() => { loadCategories(); }, []);
+
+    const handleCategoryDelete = async (c: CategoryResponse) => {
+        if (c.id === undefined) return;
+        if (!confirm(`Delete category "${c.name}"?`)) return;
+        setCategoryError(null);
+        try {
+            await MyApi.deleteCategory.categoryDeleteCategory(
+                { categoryId: c.id },
+                { format: "json" }
+            );
+            if (categoryFilter === c.id) setCategoryFilter(null);
+            await loadCategories();
+        } catch (e: any) {
+            setCategoryError(e?.error?.title ?? "Could not delete category");
+        }
+    };
 
     useEffect(() => {
         MyApi.getCategories.categoryGetCategories()
@@ -86,7 +113,7 @@ export default function MainPage() {
             if (listingId === undefined) return;
             if (!confirm("Delete this listing?")) return;
             try {
-                await MyApi.deleteListings.listingDeleteListings({listingId});
+                await MyApi.deleteListings.listingDeleteListings({ listingId }, { format: "json" });
                 setListings(prev => prev.filter(l => l.listingId !== listingId));
             } catch (e: any) {
                 setError(e?.error?.title ?? "Could not delete listing");
@@ -140,9 +167,15 @@ export default function MainPage() {
                             )}
                         </div>
 
+                        <button type="button" className="secondary" onClick={() => { setCategoryError(null); setShowCategories(true); }}>
+                            + Create category
+                        </button>
+
                         <button type="button" onClick={() => setShowCreate(true)}>
                             + Create listing
                         </button>
+                        
+                        
                     </div>
                 </header>
 
@@ -194,6 +227,30 @@ export default function MainPage() {
                                 onSaved={handleCreated}
                                 onCancel={() => setShowCreate(false)}
                             />
+                        </div>
+                    </div>
+                )}
+
+                {showCategories && (
+                    <div className="modal-backdrop" onClick={() => setShowCategories(false)}>
+                        <div className="modal" role="dialog" aria-modal="true" onClick={e => e.stopPropagation()}>
+                            <CategoryForm
+                                onSaved={c => { loadCategories(); setNotice({ type: "success", text: `Created category "${c.name}"` }); }}
+                                onCancel={() => setShowCategories(false)}
+                            />
+
+                            <h3>Existing categories</h3>
+                            {categoryError && <p className="form-error">{categoryError}</p>}
+                            <ul className="category-list">
+                                {categories.map(c => (
+                                    <li key={c.id}>
+                                        <span>{c.name}</span>
+                                        <button type="button" className="danger" onClick={() => handleCategoryDelete(c)}>
+                                            Delete
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
                     </div>
                 )}

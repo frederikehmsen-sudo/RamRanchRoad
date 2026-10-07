@@ -339,3 +339,20 @@ button.danger:hover {
 @media (prefers-reduced-motion: reduce) {
   .modal-backdrop, .modal { animation: none; }
 }
+
+.category-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.category-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
