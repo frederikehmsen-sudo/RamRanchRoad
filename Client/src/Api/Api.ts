@@ -16,6 +16,10 @@ export interface CategoryResponse {
   name?: string;
 }
 
+export interface CreateCategoryRequest {
+  name?: string;
+}
+
 export interface ListingResponse {
   vendorName?: string;
   categoryName?: string;
@@ -360,6 +364,49 @@ export class Api<
         path: `/GetCategories`,
         method: "GET",
         format: "json",
+        ...params,
+      }),
+  };
+  createCategory = {
+    /**
+     * No description
+     *
+     * @tags Category
+     * @name CategoryCreateCategory
+     * @request POST:/CreateCategory
+     */
+    categoryCreateCategory: (
+      data: CreateCategoryRequest,
+      params: RequestParams = {},
+    ) =>
+      this.request<CategoryResponse, any>({
+        path: `/CreateCategory`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+  };
+  deleteCategory = {
+    /**
+     * No description
+     *
+     * @tags Category
+     * @name CategoryDeleteCategory
+     * @request DELETE:/DeleteCategory
+     */
+    categoryDeleteCategory: (
+      query?: {
+        /** @format int32 */
+        categoryId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/DeleteCategory`,
+        method: "DELETE",
+        query: query,
         ...params,
       }),
   };
