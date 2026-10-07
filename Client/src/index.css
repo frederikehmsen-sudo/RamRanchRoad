@@ -236,9 +236,61 @@ button.danger:hover {
   margin: 0 0 1rem;
 }
 
-/* Header button pushed to the right */
-.header-action {
+/* Header buttons pushed to the right */
+.header-actions {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Category filter dropdown */
+.filter-wrapper {
+  position: relative;
+}
+
+.filter-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 15;
+}
+
+.filter-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  z-index: 20;
+  min-width: 200px;
+  margin: 0;
+  padding: 0.35rem;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--tan);
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
+
+.filter-menu button {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.filter-menu button:hover {
+  background: var(--border);
+}
+
+.filter-menu button.active {
+  color: var(--tan);
+  font-weight: 700;
+}
+
+@media (max-width: 480px) {
+  .header-actions { gap: 0.35rem; }
+  .header-actions button { padding: 0.4rem 0.6rem; font-size: 0.85rem; }
 }
 
 /* Create-listing modal */
