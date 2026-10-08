@@ -3,6 +3,7 @@
     <Project Path="Server/API/Api.csproj" />
     <Project Path="Server/Infrastructure/Infrastructure.csproj" />
     <Project Path="Server/Service/Service.csproj" />
+    <Project Path="Server/Tests/Tests.csproj" />
   </Folder>
   <Folder Name="/Server/API/" />
 </Solution>

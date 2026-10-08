@@ -1,0 +1,27 @@
+# fly.toml app configuration file generated for client-sparkling-waterfall-885 on 2026-10-08T12:47:51+02:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'client-sparkling-waterfall-885'
+primary_region = 'arn'
+
+[build]
+  dockerfile = 'Dockerfile'
+
+[env]
+  BUN_PUBLIC_API_URL = 'https://ramranchroad-misty-harborwave-4776.fly.dev'
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = 'suspend'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '512mb'
+  cpu_kind = 'shared'
+  cpus = 1
+  memory_mb = 512

@@ -7,7 +7,8 @@ using Service.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var options = new DataOptions<RamRanchDatabase>(new DataOptions().UseSQLite("Data Source=db.db"));
+var connectionString = builder.Configuration.GetConnectionString("Default") ?? "Data Source=db.db";
+var options = new DataOptions<RamRanchDatabase>(new DataOptions().UseSQLite(connectionString));
 builder.Services.AddScoped<RamRanchDatabase>(_ => new RamRanchDatabase(options));
 builder.Services.AddScoped<OrderService>();
 builder.Services.AddProblemDetails();

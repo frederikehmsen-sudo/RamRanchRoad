@@ -1,0 +1,24 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5034:8080"
+    environment:
+      ConnectionStrings__Default: "Data Source=/data/db.db"
+    volumes:
+      - ramranch-data:/data
+
+  web:
+    build: ./Client
+    ports:
+      - "3000:3000"
+    environment:
+      # Must be reachable from the BROWSER, so not http://api:8080
+      BUN_PUBLIC_API_URL: "http://localhost:5034"
+    depends_on:
+      - api
+
+volumes:
+  ramranch-data:
