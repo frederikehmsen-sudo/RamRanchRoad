@@ -1,5 +1,7 @@
-﻿node_modules
-bin
-obj
-.idea
-*.db
+﻿**/bin
+**/obj
+**/node_modules
+**/.idea
+**/.vs
+**/*.db
+.git
